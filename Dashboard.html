@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>Admin Dashboard</title>
+
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont;
+  margin: 0;
+  background: #f0f2f5;
+}
+
+/*
+.header {
+  background: linear-gradient(135deg, #25D366, #1ebc57);
+  color: white;
+  padding: 18px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+}
+*/
+
+.header {
+  display: flex;
+  justify-content: space-between; /* pushes them apart */
+  align-items: center;
+  background: linear-gradient(135deg, #25D366, #1ebc57);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 10px;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.header-right {
+  font-size: 18px;
+}
+
+
+.container {
+  padding: 15px;
+  max-width: 900px;
+  margin: auto;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  transition: 0.2s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #25D366;
+  box-shadow: 0 0 0 2px rgba(37,211,102,0.2);
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.filters button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #e4e6eb;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.filters button.active {
+  background: #25D366;
+  color: white;
+}
+
+.card {
+  background: white;
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transform: translateY(10px);
+  opacity: 0;
+}
+
+.card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 
+    0 14px 35px rgba(0,0,0,0.12),
+    0 0 12px rgba(0, 184, 148, 0.15);
+}
+
+.card.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.badge {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  display: inline-block;
+  margin-top: 6px;
+}
+
+.pending { background: #ffeaa7; }
+.paid { background: #55efc4; }
+.ready { background: #81ecec; }
+
+button {
+  padding: 9px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.15s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(2px) scale(0.98);
+}
+
+button.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.wa { background: #25D366; color: white; }
+.update { background: #0984e3; color: white; }
+
+.actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 6px;
+}
+
+#toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #333;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.skeleton {
+  height: 80px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #eee, #ddd, #eee);
+  animation: shimmer 1.2s infinite;
+  margin-bottom: 10px;
+}
+
+mark {
+  background: #fff3a0;
+  padding: 0 2px;
+  border-radius: 4px;
+}
+
+
+@keyframes pop {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  margin: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.stat {
+  text-align: center;
+  font-size: 12px;
+  color: #555;
+}
+
+.stat div {
+  font-size: 18px;
+  font-weight: 600;
+  color: #222;
+}
+
+.stat:nth-child(2) div { color: #00b894; } /* Paid */
+.stat:nth-child(3) div { color: #e17055; } /* Pending */
+.stat:nth-child(4) div { color: #0984e3; } /* Ready */
+
+.stat button {
+  margin-top: 5px;
+}
+
+.new-glow {
+  border: 2px solid #00b894 !important;
+  box-shadow: 0 0 12px rgba(0, 184, 148, 0.6) !important;
+  transition: all 0.5s ease;
+}
+
+
+@keyframes tapBounce {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(0.97); }
+  70%  { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.card.tap {
+  animation: tapBounce 0.25s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.separator {
+  width: 1px;
+  height: 16px;
+  background: rgba(255,255,255,0.4);
+}
+
+#weather i {
+  margin-right: 6px;
+}
+
+.fa-triangle-exclamation { color: #e74c3c; }
+.fa-wifi { color: #e67e22; }
+
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(5px);
+  animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ☀️ Sun - gentle pulse */
+.fa-sun {
+  color: #f1c40f;
+  animation: sunPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes sunPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+/* ☁️ Cloud - slow float */
+.fa-cloud {
+  color: #bdc3c7;
+  animation: cloudFloat 4s ease-in-out infinite;
+}
+
+@keyframes cloudFloat {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
+}
+
+/* 🌤️ Partly cloudy */
+.fa-cloud-sun {
+  color: #f1c40f;
+  animation: cloudFloat 4s ease-in-out infinite;
+}
+
+/* 🌧️ Rain - slight bounce */
+.fa-cloud-rain {
+  color: #3498db;
+  animation: rainBounce 1.2s ease-in-out infinite;
+}
+
+@keyframes rainBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+
+/* ⛈️ Storm - quick shake */
+.fa-bolt {
+  color: #9b59b6;
+  animation: stormShake 0.6s infinite;
+}
+
+@keyframes stormShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-1px); }
+  75% { transform: translateX(1px); }
+}
+
+#weather i {
+  margin-right: 6px;
+  display: inline-block; /* required for transform animations */
+}
+
+
+.badge-count {
+  background: #e74c3c;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 20px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.badge-count {
+  background: #e74c3c;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 3px 7px;
+  border-radius: 50px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+#newIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+
+.loc-tag {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #000;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+/* 🌿 AUTO (normal smart location) */
+.loc-auto {
+  background: #d1f7d6;
+  color: #0a6b2e;
+}
+
+/* 📍 GPS (precise user location) */
+.loc-gps {
+  background: #d6eaff;
+  color: #0b4ea2;
+}
+
+/* ⚠️ FALLBACK (no GPS / default) */
+.loc-fallback {
+  background: #ffe3d1;
+  color: #a14b00;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="loginScreen" style="
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:#f0f2f5;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+">
+
+  <div style="
+    background:white;
+    padding:25px;
+    border-radius:16px;
+    width:90%;
+    max-width:320px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.15);
+    text-align:center;
+  ">
+
+    <h3>Admin Login</h3>
+    <p style="font-size:13px;color:#666;">Enter password to continue</p>
+
+    <input id="passwordInput" type="password" placeholder="Password" style="
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid #ddd;
+      margin-top:10px;
+    ">
+
+<button id="loginBtn" onclick="login()" style="
+  width:100%;
+  margin-top:10px;
+  padding:12px;
+  background:#25D366;
+  color:white;
+  border:none;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+">
+  <span id="loginText">Login</span>
+  <span id="loginSpinner" style="display:none;width:14px;height:14px;border:2px solid white;border-top:2px solid transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></span>
+</button>
+
+    <p id="loginError" style="color:red;font-size:12px;margin-top:8px;"></p>
+
+  </div>
+</div>
+
+
+<!--<div class="header">Admin Dashboard</div>-->
+
+<div class="header">
+  <span class="header-title">Admin Dashboard</span>
+
+  <span class="header-right">
+
+
+<span id="newIndicator" style="display:none;">
+  <span id="newText">New Entries</span>
+  <span id="newBadge" class="badge-count">0</span>
+</span>
+
+<span id="weather">
+  <i class="fa-solid fa-cloud"></i> --°C
+</span>
+
+<span id="locationLabel"></span>
+
+<span id="locationTag" class="loc-tag"></span>
+
+    <span class="separator"></span>
+
+    <span id="dateTime"></span>
+  </span>
+</div>
+
+
+<div class="stats">
+
+  <div class="stat">
+    <div id="totalCount">0</div>
+    <span>Total</span>
+  </div>
+
+  <div class="stat">
+    <div id="paidCount">0</div>
+    <span>Paid</span>
+  </div>
+
+  <div class="stat">
+    <div id="pendingCount">0</div>
+    <span>Pending</span>
+  </div>
+
+  <div class="stat">
+    <div id="readyCount">0</div>
+    <span>Ready</span>
+  </div>
+
+<div class="stat">
+  <button onclick="manualRefresh()" style="
+    padding:8px 10px;
+    border:none;
+    border-radius:10px;
+    background:#0984e3;
+    color:white;
+    font-size:12px;
+    cursor:pointer;
+  ">
+    🔄 Refresh
+  </button>
+</div>
+
+<div class="stat">
+  <button onclick="viewNewEntries()" style="
+    padding:8px 10px;
+    border:none;
+    border-radius:10px;
+    background:#00b894;
+    color:white;
+    font-size:12px;
+    cursor:pointer;
+  ">
+    👀 View New
+  </button>
+</div>
+
+<div class="stat">
+  <button onclick="logout()" style="
+    padding:8px 10px;
+    border:none;
+    border-radius:10px;
+    background:#d63031;
+    color:white;
+    font-size:12px;
+    cursor:pointer;
+  ">
+    🚪 Exit
+  </button>
+</div>
+
+
+</div>
+
+
+<div id="sideNewModal" style="
+  position: fixed;
+  top:0;
+  right:0;
+  width:100%;
+  height:100%;
+  display:none;
+  background: rgba(0,0,0,0.2);
+  backdrop-filter: blur(2px);
+  z-index:10000;
+  justify-content:flex-end;
+">
+  
+  <div style="
+    width:320px;
+    max-width:85%;
+    height:100%;
+    background:white;
+    box-shadow:-10px 0 30px rgba(0,0,0,0.2);
+    padding:15px;
+    overflow-y:auto;
+    animation: slideIn 0.25s ease;
+  ">
+
+    <h3 style="margin-top:0;">🆕 New Entries</h3>
+
+    <div id="sideModalContent"></div>
+
+<button onclick="downloadNewEntriesPDF()" style="
+  width:100%;
+  margin-top:10px;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#0984e3;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+">
+  📄 Download PDF
+</button>
+
+    <button onclick="closeSideModal()" style="
+      width:100%;
+      margin-top:10px;
+      padding:10px;
+      border:none;
+      border-radius:10px;
+      background:#25D366;
+      color:white;
+      font-weight:600;
+      cursor:pointer;
+    ">
+      Close
+    </button>
+
+  </div>
+</div>
+
+
+<div id="cardModal" style="
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.5);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:10000;
+">
+
+  <div id="cardModalBox" style="
+    background:white;
+    width:90%;
+    max-width:400px;
+    border-radius:16px;
+    padding:16px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.2);
+    animation: zoomIn 0.25s ease;
+    position:relative;
+  ">
+
+    <button onclick="closeCardModal()" style="
+      position:absolute;
+      top:10px;
+      right:10px;
+      border:none;
+      background:#eee;
+      border-radius:50%;
+      width:28px;
+      height:28px;
+      cursor:pointer;
+      font-weight:bold;
+    ">
+      ✕
+    </button>
+
+    <div id="cardModalContent"></div>
+
+  </div>
+</div>
+
+
+<div class="container">
+
+<input id="search" placeholder="Search name or phone...">
+
+<div class="filters">
+  <button onclick="setFilter(event, 'ALL')" class="active">All</button>
+  <button onclick="setFilter(event, 'PENDING')">Pending</button>
+  <button onclick="setFilter(event, 'PAID')">Paid</button>
+  <button onclick="setFilter(event, 'READY')">Ready</button>
+</div>
+
+<div id="list"></div>
+
+</div>
+
+<div id="toast"></div>
+
+
+
+<div id="newEntryModal" style="
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.5);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+">
+
+  <div style="
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    width:90%;
+    max-width:320px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    animation: pop 0.25s ease;
+  ">
+
+    <h3>🆕 New Entry</h3>
+
+    <div id="modalContent" style="font-size:14px;margin:10px 0;"></div>
+
+    <button onclick="closeModal()" style="
+      margin-top:10px;
+      padding:10px;
+      width:100%;
+      border:none;
+      border-radius:10px;
+      background:#25D366;
+      color:white;
+      font-weight:600;
+      cursor:pointer;
+    ">
+      OK
+    </button>
+
+  </div>
+</div>
+
+
+<script>
+
+if (sessionStorage.getItem("loggedIn") !== "true") {
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("loginScreen").style.display = "flex";
+  });
+} else {
+  document.addEventListener("DOMContentLoaded", loadData);
+}
+
+const URL = "https://script.google.com/macros/s/AKfycbzvH3sHDoNAllWa3DZUbZS1dO_r5ycNSLQ-vAlBcupqYkBq2tSg2DIpHW9JVne8bIJC/exec"; // ← REPLACE THIS
+
+let DATA = [];
+let FILTER = "ALL";
+let LAST_COUNT = 0;
+let NEW_ENTRIES = [];
+
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.innerText = msg;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2000);
+}
+
+
+function highlight(text, query) {
+
+  if (!query) return text;
+
+  if (text === null || text === undefined) return "";
+
+  text = text.toString();
+
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escaped})`, "gi");
+
+  return text.replace(regex, `<mark>$1</mark>`);
+}
+
+
+function setFilter(e, type) {
+  FILTER = type;
+
+  document.querySelectorAll(".filters button")
+    .forEach(btn => btn.classList.remove("active"));
+
+  e.target.classList.add("active");
+
+  render();
+}
+
+function render() {
+
+  const searchRaw = document.getElementById("search").value.trim();
+  const search = searchRaw.toLowerCase();
+  const container = document.getElementById("list");
+
+  container.innerHTML = "";
+
+  DATA.slice().reverse().forEach(item => {
+
+const name = (item.name || "").toString().toLowerCase();
+const phone = (item.phone || "").toString();
+
+const matchesSearch =
+  name.includes(search) || phone.includes(search);
+
+if (!matchesSearch) return;
+
+    if (FILTER === "PENDING" && !item.status.includes("PENDING")) return;
+    if (FILTER === "PAID" && item.status !== "PAID") return;
+    if (FILTER === "READY" && item.notes !== "READY FOR WHATSAPP") return;
+
+    let badge = "pending";
+    if (item.status === "PAID") badge = "paid";
+    if (item.notes === "READY FOR WHATSAPP") badge = "ready";
+
+const card = document.createElement("div");
+card.className = "card";
+card.setAttribute("data-row", item.row);
+
+card.addEventListener("click", () => {
+
+  // bounce effect
+  card.classList.remove("tap");
+  void card.offsetWidth;
+  card.classList.add("tap");
+
+  // open modal after slight delay (feels smoother)
+  setTimeout(() => {
+    openCardModal(item);
+  }, 150);
+
+});
+
+    card.innerHTML = `
+    <b>${highlight(item.name, searchRaw)}</b><br>
+    📱 ${highlight(item.phone, searchRaw)}<br>
+    🧪 ${item.service}<br>
+
+      <span class="badge ${badge}">
+        ${item.status}
+      </span>
+
+      <div class="actions">
+
+        ${item.whatsapp ? `
+          <button class="wa" onclick="window.open('${item.whatsapp}')">
+            WhatsApp
+          </button>
+        ` : ""}
+
+        <button class="update" onclick="updateStatus(this, ${item.row}, 'PAID')">
+          Mark Paid
+        </button>
+
+        <button class="update" onclick="updateStatus(this, ${item.row}, 'PENDING PAYMENT')">
+          Reset
+        </button>
+
+      </div>
+    `;
+
+    container.appendChild(card);
+
+    setTimeout(() => {
+      card.classList.add("show");
+    }, 50);
+  });
+}
+
+async function updateStatus(btn, row, status) {
+
+  btn.classList.add("loading");
+  const original = btn.innerText;
+  btn.innerText = "Updating...";
+
+  try {
+    await fetch(URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "updateStatus",
+        row: row,
+        status: status
+      })
+    });
+
+    btn.innerText = "✔ Done";
+    showToast("Status updated");
+
+    setTimeout(() => loadData(), 500);
+
+  } catch {
+    btn.innerText = "Error";
+    btn.classList.remove("loading");
+    btn.innerText = original;
+  }
+}
+
+document.getElementById("search").addEventListener("input", render);
+
+loadData();
+
+
+async function login() {
+
+  const btn = document.getElementById("loginBtn");
+  const spinner = document.getElementById("loginSpinner");
+  const text = document.getElementById("loginText");
+  const error = document.getElementById("loginError");
+
+  error.innerText = "";
+
+  // 🔄 start loading state
+  btn.disabled = true;
+  spinner.style.display = "inline-block";
+  text.innerText = "Logging in...";
+
+  const input = document.getElementById("passwordInput").value;
+
+  try {
+
+    const res = await fetch(URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "login",
+        password: input
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      sessionStorage.setItem("loggedIn", "true");
+      document.getElementById("loginScreen").style.display = "none";
+      loadData(true);
+    } else {
+      error.innerText = "Incorrect password";
+    }
+
+  } catch (e) {
+    error.innerText = "Server error";
+  }
+
+  // 🔄 reset button state (only if login fails)
+  btn.disabled = false;
+  spinner.style.display = "none";
+  text.innerText = "Login";
+}
+
+
+
+function getLastSeen() {
+  return localStorage.getItem("lastSeenRow");
+}
+
+function setLastSeen(row) {
+  localStorage.setItem("lastSeenRow", row);
+}
+
+
+async function loadData(isLogin = false) {
+
+  const container = document.getElementById("list");
+
+  container.innerHTML = `
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+  `;
+
+  const res = await fetch(URL);
+  const newData = await res.json();
+
+  // 🆕 Detect new entries
+  if (isLogin && newData.length > 0) {
+
+    const lastSeen = getLastSeen();
+
+    if (lastSeen) {
+      const newEntries = newData.filter(item => item.row > lastSeen);
+
+      if (newEntries.length > 0) {
+  NEW_ENTRIES = newEntries; // store globally
+  updateNewBadge();
+  showNewEntryPopup(newEntries);
+}
+    }
+
+    // always store latest row
+    const latest = newData[newData.length - 1];
+    setLastSeen(latest.row);
+  }
+
+  DATA = newData;
+
+  updateStats();
+  render();
+}
+
+
+function showNewEntryPopup(entries) {
+
+  const modal = document.getElementById("newEntryModal");
+  const content = document.getElementById("modalContent");
+
+  let html = "";
+
+entries.forEach(e => {
+  html += `
+    <div style="
+      border:1px solid #eee;
+      border-radius:12px;
+      padding:10px;
+      margin-bottom:10px;
+      background:#fafafa;
+    ">
+      <b>${e.name}</b><br>
+      📱 ${e.phone}<br>
+      🧪 ${e.service}
+    </div>
+  `;
+});
+
+  content.innerHTML = html;
+
+  modal.style.display = "flex";
+}
+
+
+function updateStats() {
+
+  let total = DATA.length;
+  let paid = 0;
+  let pending = 0;
+  let ready = 0;
+
+  DATA.forEach(item => {
+    if (item.status === "PAID") paid++;
+    else if (item.status.includes("PENDING")) pending++;
+
+    if (item.notes === "READY FOR WHATSAPP") ready++;
+  });
+
+  document.getElementById("totalCount").innerText = total;
+  document.getElementById("paidCount").innerText = paid;
+  document.getElementById("pendingCount").innerText = pending;
+  document.getElementById("readyCount").innerText = ready;
+}
+
+
+function closeModal() {
+  const modal = document.getElementById("newEntryModal");
+  modal.style.display = "none";
+}
+
+document.getElementById("newEntryModal").addEventListener("click", function(e) {
+  if (e.target === this) {
+    closeModal();
+  }
+});
+
+
+function viewNewEntries() {
+
+  if (!NEW_ENTRIES || NEW_ENTRIES.length === 0) {
+    showToast("No new entries");
+    return;
+  }
+
+  const modal = document.getElementById("sideNewModal");
+  const content = document.getElementById("sideModalContent");
+
+  let html = "";
+
+  NEW_ENTRIES.forEach(e => {
+    html += `
+      <div style="
+        border:1px solid #eee;
+        border-radius:12px;
+        padding:10px;
+        margin-bottom:10px;
+      ">
+        <b>${e.name}</b><br>
+        📱 ${e.phone}<br>
+        🧪 ${e.service}
+      </div>
+    `;
+  });
+
+  content.innerHTML = html;
+  modal.style.display = "flex";
+
+ // NEW_ENTRIES = [];
+ // updateNewBadge();
+
+}
+
+function closeSideModal() {
+  document.getElementById("sideNewModal").style.display = "none";
+}
+
+document.getElementById("sideNewModal").addEventListener("click", function(e) {
+  if (e.target === this) {
+    closeSideModal();
+  }
+});
+
+
+function openCardModal(item) {
+
+  const modal = document.getElementById("cardModal");
+  const content = document.getElementById("cardModalContent");
+
+  content.innerHTML = `
+    <h3>${item.name}</h3>
+    <p>📱 ${item.phone}</p>
+    <p>🧪 ${item.service}</p>
+    <p>Status: <b>${item.status}</b></p>
+  `;
+
+  modal.style.display = "flex";
+}
+
+function closeCardModal() {
+  document.getElementById("cardModal").style.display = "none";
+}
+
+document.getElementById("cardModal").addEventListener("click", function(e) {
+  if (e.target === this) {
+    closeCardModal();
+  }
+});
+
+
+</script>
+
+<script>
+function updateDateTime() {
+  const now = new Date();
+
+  const options = {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  };
+
+  const date = now.toLocaleDateString(undefined, options);
+  const time = now.toLocaleTimeString();
+
+  document.getElementById("dateTime").innerHTML = `${date} | ${time}`;
+}
+
+// run immediately
+updateDateTime();
+
+// update every second
+setInterval(updateDateTime, 1000);
+</script>
+
+
+<script>
+
+async function getLocationName() {
+  try {
+    const lat = 10.6667;
+    const lon = -61.5167;
+
+    const res = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=en`
+    );
+
+    const data = await res.json();
+
+const result = data?.results?.[0] || {};
+
+const name =
+  result.name ||
+  result.city ||
+  result.locality ||
+  result.admin2 ||
+  result.admin1 ||
+  "Unknown Location";
+
+   document.getElementById("locationLabel").innerText = `📍 ${name}`;
+   document.getElementById("locationTag").innerText = "AUTO";
+
+  } catch (err) {
+    document.getElementById("locationLabel").innerText = "📍 POS";
+  }
+}
+
+
+function smartRegionFix(name) {
+  const n = (name || "").toLowerCase();
+
+  if (n.includes("arima")) return "Arima";
+  if (n.includes("tunapuna")) return "Tunapuna";
+  if (n.includes("tacarigua")) return "Tacarigua";
+  if (n.includes("chaguanas")) return "Chaguanas";
+  if (n.includes("san fernando")) return "San Fernando";
+
+  return "Port of Spain";
+}
+
+
+function smartRegionFix(name) {
+  const n = (name || "").toLowerCase();
+
+  if (n.includes("arima")) return "Arima";
+  if (n.includes("tunapuna")) return "Tunapuna";
+  if (n.includes("tacarigua")) return "Tacarigua";
+  if (n.includes("chaguanas")) return "Chaguanas";
+  if (n.includes("san fernando")) return "San Fernando";
+
+  return name;
+}
+
+
+async function smartLocation() {
+
+  const fallback = "Port of Spain";
+
+function mapArea(name) {
+
+  const fixed = smartRegionFix(name);
+
+  const n = (fixed || "").toLowerCase();
+
+  if (n.includes("arima")) return "Arima";
+  if (n.includes("tunapuna")) return "Tunapuna";
+  if (n.includes("tacarigua")) return "Tacarigua";
+  if (n.includes("chaguanas")) return "Chaguanas";
+  if (n.includes("san fernando")) return "San Fernando";
+
+  return "Port of Spain";
+}
+
+
+  function setLocation(name, type) {
+    const label = document.getElementById("locationLabel");
+    const tag = document.getElementById("locationTag");
+
+    label.innerText = `📍 ${name}`;
+
+    tag.innerText = type;
+    tag.className = "loc-tag";
+
+    if (type === "GPS") tag.classList.add("loc-gps");
+    else if (type === "AUTO") tag.classList.add("loc-auto");
+    else tag.classList.add("loc-fallback");
+  }
+
+  // STEP 1: GPS (best)
+  if (navigator.geolocation) {
+
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+
+      try {
+        const res = await fetch(
+          `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&language=en`
+        );
+
+        const data = await res.json();
+
+        const raw =
+          data?.results?.[0]?.name ||
+          data?.results?.[0]?.admin1 ||
+          fallback;
+
+        setLocation(mapArea(raw), "GPS");
+
+      } catch (e) {
+        networkFallback();
+      }
+
+    }, networkFallback);
+
+  } else {
+    networkFallback();
+  }
+
+  // STEP 2: Network IP fallback (NO permission needed)
+  async function networkFallback() {
+
+    try {
+      const res = await fetch("https://ipapi.co/json/");
+      const data = await res.json();
+
+      const raw =
+        data?.city ||
+        data?.region ||
+        fallback;
+
+      setLocation(mapArea(raw), "AUTO");
+
+    } catch (e) {
+      setLocation(fallback, "FALLBACK");
+    }
+  }
+}
+
+
+
+async function getWeather() {
+
+  try {
+    // Port of Spain coordinates
+    const lat = 10.6667;
+    const lon = -61.5167;
+
+    const res = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`
+    );
+
+    const data = await res.json();
+
+    const temp = Math.round(data.current_weather.temperature);
+    const code = data.current_weather.weathercode;
+
+let iconClass = "fa-cloud";
+
+if (code === 0) iconClass = "fa-sun";
+else if (code < 3) iconClass = "fa-cloud-sun";
+else if (code < 50) iconClass = "fa-cloud";
+else if (code < 70) iconClass = "fa-cloud-rain";
+else if (code < 90) iconClass = "fa-bolt";
+
+const weatherEl = document.getElementById("weather");
+
+weatherEl.classList.remove("fade-in");   // reset animation
+void weatherEl.offsetWidth;              // force reflow
+weatherEl.classList.add("fade-in");
+
+weatherEl.innerHTML =
+  `<i class="fa-solid ${iconClass}"></i> ${temp}°C`;
+weatherEl.style.display = "inline-flex";
+weatherEl.style.alignItems = "center";
+
+  } catch (err) {
+    document.getElementById("weather").innerHTML = "☁️ --°C";
+  }
+}
+
+getWeather();
+smartLocation();
+setInterval(getWeather, 600000); // every 10 mins
+
+window.addEventListener("online", getWeather);   //derek
+</script>
+
+<script>
+function updateNewBadge() {
+  const badge = document.getElementById("newBadge");
+  const indicator = document.getElementById("newIndicator");
+  const text = document.getElementById("newText");
+
+  if (NEW_ENTRIES && NEW_ENTRIES.length > 0) {
+    const count = NEW_ENTRIES.length;
+
+    indicator.style.display = "inline-flex";
+    badge.innerText = count;
+
+    // 👇 singular vs plural
+    text.innerText = count === 1 ? "New Entry" : "New Entries";
+
+  } else {
+    indicator.style.display = "none";
+  }
+}
+
+</script>
+
+<script>
+function logout() {
+  if (!confirm("Are you sure you want to exit?")) return;
+  sessionStorage.removeItem("loggedIn");
+
+  // optional: small UX delay
+  setTimeout(() => {
+    location.reload();
+  }, 200);
+}
+</script>
+
+<script>
+function manualRefresh() {
+  showToast("Refreshing...");
+
+  loadData();
+  updateDateTime();
+  getWeather();
+}
+</script>
+
+<script>
+function downloadNewEntriesPDF() {
+
+  if (!NEW_ENTRIES || NEW_ENTRIES.length === 0) {
+    showToast("No new entries to download");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  let y = 10;
+
+  const now = new Date();
+  const dateStr = now.toLocaleString();
+
+  // ✅ BRAND TITLE
+  doc.setFontSize(16);
+  doc.setFont(undefined, "bold");
+  doc.text("Analytical Health Services", 10, y);
+  y += 6;
+
+  doc.setFontSize(12);
+  doc.setFont(undefined, "normal");
+  doc.text("Dashboard App - New Entries Report", 10, y);
+  y += 6;
+
+  doc.setFontSize(10);
+  doc.text(`Generated: ${dateStr}`, 10, y);
+  y += 10;
+
+  // ✅ CALCULATE STATS
+  let paid = 0;
+  let pending = 0;
+  let ready = 0;
+
+  NEW_ENTRIES.forEach(e => {
+    if (e.status === "PAID") paid++;
+    else if ((e.status || "").includes("PENDING")) pending++;
+
+    if (e.notes === "READY FOR WHATSAPP") ready++;
+  });
+
+  // ✅ STATS SECTION
+  doc.setFontSize(11);
+  doc.setFont(undefined, "bold");
+  doc.text("Summary", 10, y);
+  y += 6;
+
+  doc.setFont(undefined, "normal");
+  doc.text(`Total: ${NEW_ENTRIES.length}`, 10, y);
+  y += 5;
+  doc.text(`Paid: ${paid}`, 10, y);
+  y += 5;
+  doc.text(`Pending: ${pending}`, 10, y);
+  y += 5;
+  doc.text(`Ready: ${ready}`, 10, y);
+  y += 10;
+
+  // ✅ ENTRIES LIST
+  NEW_ENTRIES.forEach((e, index) => {
+
+    const text = `
+${index + 1}. ${e.name}
+Phone: ${e.phone}
+Service: ${e.service}
+Status: ${e.status || ""}
+    `;
+
+    const lines = doc.splitTextToSize(text, 180);
+
+    doc.setFontSize(11);
+    doc.text(lines, 10, y);
+
+    y += lines.length * 6 + 4;
+
+    if (y > 270) {
+      doc.addPage();
+      y = 10;
+    }
+
+  });
+
+  // ✅ FILENAME WITH DATE/TIME
+  const fileDate = now.toISOString().slice(0, 10);
+  const fileTime = now.toTimeString().slice(0, 8).replace(/:/g, "-");
+
+  doc.save(`new_entries_${fileDate}_${fileTime}.pdf`);
+
+  // ✅ CLEAR AFTER DOWNLOAD
+  NEW_ENTRIES = [];
+  updateNewBadge();
+}
+
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</body>
+</html>

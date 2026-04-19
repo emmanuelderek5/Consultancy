@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About - Analytical Health Services</title>
+
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont;
+  margin: 0;
+  background: #f4f6f8;
+  color: #333;
+}
+
+.header {
+  background: #25D366;
+  color: white;
+  padding: 18px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 30px 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.06);
+  padding: 28px;
+}
+
+.top-section {
+  display: flex;
+  gap: 25px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.profile-img {
+  flex: 1;
+  min-width: 220px;
+}
+
+.profile-img img {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.profile-text {
+  flex: 2;
+  min-width: 250px;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 24px;
+  letter-spacing: -0.5px;
+}
+
+.profile-text p {
+  line-height: 1.6;
+  color: #555;
+}
+
+.profile-text p:first-of-type {
+  font-size: 15px;
+}
+
+.trust-strip {
+  display: flex;
+  gap: 20px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #555;
+}
+
+.divider {
+  height: 1px;
+  background: #eee;
+  margin: 25px 0;
+}
+
+.full-text {
+  line-height: 1.7;
+  color: #444;
+}
+
+.full-text h3 {
+  margin-top: 20px;
+  font-size: 16px;
+}
+
+.footer-btn {
+  text-align: center;
+  margin-top: 25px;
+}
+
+button {
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: none;
+  background: #25D366;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#profileImage:hover {
+  transform: scale(1.04);
+}
+
+@keyframes hintPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.hint {
+  animation: hintPulse 1s ease;
+}
+
+button:hover {
+  background: rgba(0,0,0,0.8);
+  transform: scale(1.05);
+  transition: 0.2s ease;
+}
+
+</style>
+</head>
+
+<body>
+
+<button onclick="history.back(); window.close();" 
+  style="
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 1000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  ">
+  ×
+</button>
+
+<div class="header">About the Consultant</div>
+
+<div class="container">
+
+  <div class="card">
+
+    <!-- TOP SECTION -->
+    <div class="top-section">
+
+      <!-- IMAGE -->
+      <div class="profile-img">
+        <!--<img src="DR-E.jpeg" alt="Profile Photo">-->
+        <img src="images\DR-E.jpeg" alt="Profile Photo" id="profileImage" style="cursor:pointer; transition:0.25s ease;">
+      </div>
+
+      <!-- TEXT -->
+      <div class="profile-text">
+        <h2>Dr. Derek Emmanuel</h2>
+
+        <p style="margin:6px 0; font-weight:600; color:#25D366;">
+          CEO Analytical Health Services
+        </p>
+
+        <p style="margin:6px 0; font-weight:600; color:#25D366;">
+          Molecular and Chemical Pathologist/Consultant in Laboratory Medicine
+        </p>
+    
+        <p style="margin:4px 0; font-size:14px; color:#777;">
+          BSc, MSc, PhD (Chemical Pathology)
+        </p>
+
+        <p><i>
+"Clinical treatment is only the first portal toward recovery and disease management. Indeed, the true sanctuary of discovery lies in the folds of diagnostic testing. It is there that explanations of life and existence are sought. It is my sincerest belief that knowledge is the starting point of all hygeian progress. From a holistic perspective, finding ways to prevent, as well as treat and cure heart disease, stroke and other debilitating cardiovascular, communicable and non-communicable diseases depends on having an astute awareness of the disease state. I am committed to working with you in an understanding, caring manner to allow you to take charge of your health, future and existence..."       
+        </p></i>
+
+        <!-- TRUST STRIP -->
+        <div class="trust-strip">
+          <div>✔ 20 Years Experience</div>
+          <div>✔ > 1,500+ Consultations</div>
+          <div>✔ Evidence-Based Analysis</div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- FULL TEXT -->
+    <div class="full-text">
+
+      <h3>Professional Background</h3>
+      <p>
+Dr. Emmanuel specializes in determining the underlying cause of disease states and possesses two postgraduate degrees in Pathology, majoring in both Molecular and Chemical Pathology.
+     </p>
+
+<h3>Achievements</h3>
+<p>
+
+Dr. Emmanuel is the recipient of two scholarships, a Postgraduate University of the West Indies (UWI) scholarship and the Jeffrey Taylor scholarship from the prestigious Institute of Human Nutrition (IHN) located in Southampton, England. Dr. Emmanuel spent the final years of his study at the Southampton General Hospital, Southampton, UK using Gas-Chromatography Flame-Ionization detection (GC-FID) techniques to examine long chain polyunsaturated fatty acids (LCPUFAs) isolated from maternal and cord blood to determine inherent metabolic relationships that affect the developing foetus during pregnancy.
+
+</p>
+
+
+<p>
+In July, 2007, Dr. Emmanuel received an award from the Paediatric-Maternal division of the American Association of Clinical Chemists (AACC) where his work on “Lipid levels in pregnancy and birth outcome” superseded submissions from all over the world, for best Abstract, by the AACC review committee at the San Diego Convention Centre, USA.
+</p>
+
+<p>
+ Dr. Emmanuel’s work allowed for the discovery of a blood analyte which, at specific concentrations in the first trimester of pregnancy, predicts birth weight. He has also developed a genetic probe that uses non-radioactive biotinylated labels to detect human papillomavirus (HPV) in seemingly normal cervical cells.
+</p>
+
+<p>
+In January 2014, Dr. Emmanuel was awarded the Prime Minister’s award for scientific ingenuity and excellence (special prize), hosted by NIHERST (Trinidad and Tobago) for the development of a Chronic noncommunicable disease (CNCD) Calculator.
+</p>
+
+<p>
+In May, 2015, Dr. Emmanuel and his company’s inceptive approach to health was nationally recognized by being honoured as a champion of the 2015 ideas to innovation (i2i) competition.
+</p>
+
+<p>
+In August, 2015, Dr. Emmanuel was (again) awarded the Prime Minister’s award for scientific ingenuity and excellence (finalist), hosted by NIHERST (Trinidad and Tobago) for the development of a Diagnostic (Health) Calculator.
+</p>
+
+<p>
+In August 2016, Dr. Emmanuel was a winner in the Scotiabank Vision Achiever Award for his company’s innovative approach of preventive cancer strategies utilizing DNA testing.
+</p>
+
+<p>
+In April, 2021, Dr. Emmanuel became a certified ISO 9001 Lead Auditor (Quality Management System)
+</p>
+
+      <h3>Approach to Patient Care</h3>
+      <p>
+        Health through Diagnosis
+      </p>
+
+      <h3>Special Interests</h3>
+      <p>
+        Cervical Cancer, genetic paradigms in congenital, childhood and adult onset diseases; predictive testing; screening; and complex traits.
+      </p>
+
+    </div>
+
+    <!-- RETURN BUTTON -->
+    <div class="footer-btn">
+      <a href="Consultancy.html" style="text-decoration:none;">
+        <button>Return to Consultation</button>
+      </a>
+    </div>
+
+
+<div style="text-align:center; margin-top:10px;">
+  <button type="button" onclick="history.back(); window.close();" 
+    style="background:#ccc; color:#333; border:none;">
+    Close
+  </button>
+</div>
+
+  </div>
+
+</div>
+
+
+
+<div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; backdrop-filter: blur(8px); background:rgba(0,0,0,0.4); justify-content:center; align-items:center; z-index:999;">
+
+  <img id="modalImg" src="" style="max-width:90%; max-height:90%; border-radius:12px; box-shadow:0 10px 40px rgba(0,0,0,0.4); transition:0.25s ease; transform:scale(0.9);">
+
+</div>
+
+
+<script>
+const profileImage = document.getElementById("profileImage");
+const modal = document.getElementById("imageModal");
+const modalImg = document.getElementById("modalImg");
+
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    profileImage.classList.add("hint");
+
+    setTimeout(() => {
+      profileImage.classList.remove("hint");
+    }, 1000);
+
+  }, 800);
+});
+
+profileImage.addEventListener("click", () => {
+  modal.style.display = "flex";
+  modalImg.src = profileImage.src;
+
+  setTimeout(() => {
+    modalImg.style.transform = "scale(1)";
+  }, 10);
+});
+
+modal.addEventListener("click", () => {
+  modalImg.style.transform = "scale(0.9)";
+  setTimeout(() => {
+    modal.style.display = "none";
+  }, 200);
+});
+
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Consultancy</title>
+
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont;
+  margin: 0;
+  background: #f0f2f5;
+}
+
+.header {
+  background: #25D366;
+  color: white;
+  padding: 18px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.container {
+  padding: 20px;
+  max-width: 500px;
+  margin: auto;
+}
+
+.card {
+  background: white;
+  padding: 22px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+input, select, button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #25D366;
+}
+
+button {
+  background: #25D366;
+  color: white;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+}
+
+#pdfSection {
+  display: none;
+}
+
+.helper-text {
+  font-size: 12px;
+  color: #777;
+  margin-top: 6px;
+}
+
+#loadingOverlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  color: white;
+  flex-direction: column;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #25D366;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+#successMessage {
+  display: none;
+  text-align: center;
+  padding: 30px;
+}
+
+#emailModal {
+  display:none;
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.5);
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-box {
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  width:90%;
+  max-width:350px;
+  text-align:center;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">Lab Test Consultancy</div>
+
+<div class="container">
+
+<div class="card" id="formCard">
+
+<form id="form">
+
+<input name="name" placeholder="Full Name" required>
+<input name="email" type="email" placeholder="Email Address" required>
+<input name="phone" placeholder="WhatsApp Number" required>
+<p class="helper-text">Enter number with relevant country code. No spaces or hyphen (e.g. 1868xxxxxxx)</p>
+
+<select name="service" id="serviceSelect">
+  <option value="Blood Test Interpretation">Blood Test Interpretation</option>
+  <option value="Lab Test Recommendation">Lab Test Recommendation</option>
+  <option value="General Consultation">General Consultation</option>
+</select>
+
+<p id="serviceDescription" class="helper-text"></p>
+
+<div id="pdfSection">
+  <label>Upload your lab report (PDF only)</label>
+  <button type="button" id="uploadBtn">Send Report via Email</button>
+  <p class="helper-text">After submitting, you’ll be prompted to email your report.</p>
+</div>
+
+<button type="submit" id="submitBtn">Submit Request</button>
+
+<p class="helper-text">🔒 Your information is confidential and securely handled.</p>
+<p class="helper-text">We will contact you via WhatsApp.</p>
+
+</form>
+</div>
+
+<div id="successMessage">
+  <h2>✅ Request Sent</h2>
+  <p style="font-size:18px;">📱 We’ll message you on WhatsApp shortly.</p>
+</div>
+
+
+<div id="paymentNotice" style="display:none; text-align:center; padding:30px;">
+  <h2>💳 Payment Required</h2>
+
+  <p style="font-size:16px;">
+    Please confirm your payment via email before your consultation is processed.
+  </p>
+
+  <p style="font-size:14px; color:#555;">
+    Send proof of payment to:<br>
+    <b>analyticalhealthservices@gmail.com</b>
+  </p>
+
+<div style="margin-top:20px; text-align:left; background:#f7f7f7; padding:15px; border-radius:10px;">
+  <p style="margin:5px 0;"><b>Bank:</b> RBC Royal Bank</p>
+  <p style="margin:5px 0;"><b>Account Number:</b> 110000004732427</p>
+  <p style="margin:5px 0;"><b>Branch:</b> Couva</p>
+</div>
+
+  <p style="margin-top:15px; font-weight:bold;">
+    Status: Pending Payment
+  </p>
+
+</div>
+
+<a href="DBiography.html" target="_blank" style="display:block; margin-top:20px; text-decoration:none;">
+  <button type="button" style="background:#fff; color:#25D366; border:1px solid #25D366;">
+    Learn More About Us
+  </button>
+</a>
+
+<div style="text-align:center; margin-top:15px;">
+  <a href="dashboard.html" style="text-decoration:none;">
+    <button type="button" style="background:#25D366; color:white; border:none;">
+      Open Dashboard (Admin ONLY!)
+    </button>
+  </a>
+</div>
+
+
+</div>
+
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <div>Submitting...</div>
+</div>
+
+<div id="emailModal">
+  <div class="modal-box">
+    <h3>Send Your Report</h3>
+    <p>Please email your lab report to:</p>
+    <p><b>analyticalhealthservices@gmail.com</b></p>
+
+    <button id="sendEmailBtn">Open Email</button>
+    <button id="closeModalBtn" style="background:#ccc; color:#333;">Cancel</button>
+  </div>
+</div>
+
+<script>
+
+const form = document.getElementById("form");
+const serviceSelect = document.getElementById("serviceSelect");
+const pdfSection = document.getElementById("pdfSection");
+const desc = document.getElementById("serviceDescription");
+
+const uploadBtn = document.getElementById("uploadBtn");
+const emailModal = document.getElementById("emailModal");
+const closeModalBtn = document.getElementById("closeModalBtn");
+const sendEmailBtn = document.getElementById("sendEmailBtn");
+
+const submitBtn = document.getElementById("submitBtn");
+
+const WHATSAPP_NUMBER = "18685551234"; // replace with your number (country code required)
+
+const URL = "https://script.google.com/macros/s/AKfycbzvH3sHDoNAllWa3DZUbZS1dO_r5ycNSLQ-vAlBcupqYkBq2tSg2DIpHW9JVne8bIJC/exec";
+
+function togglePDF() {
+  pdfSection.style.display =
+    serviceSelect.value === "Blood Test Interpretation" ? "block" : "none";
+}
+
+function updateDescription() {
+  if (serviceSelect.value === "Blood Test Interpretation") {
+    desc.innerText = "We analyze your lab results and explain what they mean.";
+  } else if (serviceSelect.value === "Lab Test Recommendation") {
+    desc.innerText = "We recommend the right tests based on your symptoms.";
+  } else {
+    desc.innerText = "General health consultation and guidance.";
+  }
+}
+
+serviceSelect.addEventListener("change", () => {
+  togglePDF();
+  updateDescription();
+});
+
+togglePDF();
+updateDescription();
+
+uploadBtn.addEventListener("click", () => {
+  emailModal.style.display = "flex";
+});
+
+closeModalBtn.addEventListener("click", () => {
+  emailModal.style.display = "none";
+});
+
+sendEmailBtn.addEventListener("click", () => {
+
+  const subject = `Lab Report Submission - ${serviceSelect.value}`;
+
+  const body =
+`Hello,
+
+My name is ${form.name.value}.
+
+I am requesting: ${serviceSelect.value}.
+
+Email: ${form.email.value}
+Phone: ${form.phone.value}
+
+I have attached my lab report.`;
+
+  window.location.href =
+    `mailto:analyticalhealthservices@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  emailModal.style.display = "none";
+});
+
+
+function normalizeWhatsAppNumber(input) {
+  let phone = input.replace(/\D/g, ''); // remove spaces, hyphens, brackets, etc.
+
+  // remove leading zeros (common in local formats)
+  phone = phone.replace(/^0+/, '');
+
+  // enforce max WhatsApp length (E.164 max is 15 digits)
+  if (phone.length > 15) {
+    phone = phone.substring(0, 15);
+  }
+
+  return phone;
+}
+
+
+
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  submitBtn.innerText = "Submitting...";
+  submitBtn.disabled = true;
+
+  document.getElementById("loadingOverlay").style.display = "flex";
+
+const rawPhone = form.phone.value;
+const phone = normalizeWhatsAppNumber(rawPhone);
+
+const payload = {
+  name: form.name.value,
+  email: form.email.value,
+  phone: phone,
+  service: serviceSelect.value
+};
+
+if (phone.length < 10 || phone.length > 15) {
+  alert("Please enter a valid WhatsApp number in international format.");
+  submitBtn.innerText = "Submit Request";
+  submitBtn.disabled = false;
+  document.getElementById("loadingOverlay").style.display = "none";
+  return;
+}
+
+  try {
+    const res = await fetch(URL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+
+    const result = await res.json();
+
+    document.getElementById("loadingOverlay").style.display = "none";
+
+    if (!result.success) {
+      alert("Error: " + result.error);
+      submitBtn.innerText = "Submit Request";
+      submitBtn.disabled = false;
+      return;
+    }
+
+
+// ✅ SUCCESS PATH (THIS IS WHERE WHATSAPP MUST GO)
+document.getElementById("formCard").style.display = "none";
+document.getElementById("successMessage").style.display = "block";
+
+setTimeout(() => {
+  document.getElementById("successMessage").style.display = "none";
+  document.getElementById("paymentNotice").style.display = "block";
+}, 1500);
+
+
+submitBtn.innerText = "Submit Request";
+submitBtn.disabled = false;
+
+
+    document.getElementById("formCard").style.display = "none";
+    document.getElementById("successMessage").style.display = "block";
+
+  } catch (err) {
+    document.getElementById("loadingOverlay").style.display = "none";
+    alert("Submission failed.");
+    submitBtn.innerText = "Submit Request";
+    submitBtn.disabled = false;
+  }
+});
+
+
+function sendWhatsApp(name, phone, service) {
+
+  const message =
+`Hello 👋
+
+New Lab Consultation Request:
+
+Name: ${name}
+Phone: ${phone}
+Service: ${service}
+
+Please follow up with the client.`;
+
+  const url =
+`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+  window.location.href = url;
+}
+
+
+
+function triggerWhatsAppOnPaid() {
+
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Consultancy Requests");
+  const data = sheet.getDataRange().getValues();
+
+  for (let i = 1; i < data.length; i++) {
+
+    const name = data[i][1];      // Name
+    const email = data[i][2];     // Email
+    const phone = data[i][3];     // Phone
+    const service = data[i][4];   // Service
+    const status = data[i][6];    // Status
+    const notes = data[i][7];    // Notes
+
+    // ONLY act when PAID and not already processed
+    if (status === "PAID" && notes !== "NOTIFIED") {
+
+      const message =
+`Hello 👋
+
+Payment confirmed for your consultation.
+
+Name: ${name}
+Service: ${service}
+
+We will contact you shortly via WhatsApp.`;
+
+      const url =
+`https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+
+      // mark as processed
+      sheet.getRange(i + 1, 8).setValue("NOTIFIED");
+
+      Logger.log(url);
+    }
+  }
+}
+
+
+
+</script>
+
+</body>
+</html>

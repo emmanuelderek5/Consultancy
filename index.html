@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrustableX App Splash Page</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+  .fade-in.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(-45deg, #1f2937, #111827, #1e3a8a, #2563eb);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+  }
+
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .logo-container {
+    position: relative;
+    display: inline-block;
+    width: 256px;
+    height: 256px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .logo-container img {
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .orbit-light {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 12px 4px rgba(255,255,255,0.8);
+    top: 0%;
+    left: 0%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+  }
+
+  .tail {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(2px);
+    z-index: 2;
+  }
+
+  .vertical-light {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30px;
+    height: 140%;
+    pointer-events: none;
+    z-index: 5;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.5), rgba(255,255,255,0));
+    filter: blur(8px);
+    transform: translate(-50%, -50%) rotate(0deg) scaleY(1);
+    transform-origin: center;
+  }
+
+  .vertical-light::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 160%;
+    height: 160%;
+    background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 80%);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+.logo-container {
+  position: relative;
+  display: inline-block;
+  width: clamp(180px, 60vw, 320px);
+  height: clamp(180px, 60vw, 320px);
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+</style>
+</head>
+<body>
+
+<div class="text-center">
+  <div class="logo-container fade-in" id="logoContainer">
+    <img src="images\AHS-LOGO.png" alt="AHS Logo" class="w-full h-full">
+    <div class="orbit-light" id="orbitLight"></div>
+    <div id="tailContainer"></div>
+    <div class="vertical-light" id="verticalLight"></div>
+  </div>
+
+  <h1 class="fade-in text-white text-4xl mt-6 font-bold">Welcome!</h1>
+  <p class="fade-in text-gray-300 text-sm mt-2">Powered by Analytical Health Services &copy</p>
+  <button class="fade-in mt-8 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg" onclick="enterSite()">Open</button>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.fade-in').forEach((el, i) => {
+    setTimeout(() => el.classList.add('show'), i * 300);
+  });
+  animateOrbitLight();
+});
+
+function enterSite() {
+  window.location.href = 'Consultancy.html';
+}
+
+function animateOrbitLight() {
+  const light = document.getElementById('orbitLight');
+  const tailContainer = document.getElementById('tailContainer');
+  const streak = document.getElementById('verticalLight');
+  const logo = document.getElementById('logoContainer');
+  const radius = logo.clientWidth / 2 - 8;
+  const centerX = logo.clientWidth / 2;
+  const centerY = logo.clientHeight / 2;
+
+  let angle = 0;
+  let flickerOffset = Math.random() * 1000; // random starting point for flicker
+  const tail = [];
+
+  function step() {
+    angle += 0.03;
+    if (angle >= 2 * Math.PI) angle -= 2 * Math.PI;
+
+    const x = centerX + radius * Math.cos(angle);
+    const y = centerY + radius * Math.sin(angle);
+
+    // Orb
+    light.style.transform = `translate(${x}px, ${y}px)`;
+
+    // Tail particles
+    const t = document.createElement('div');
+    t.className = 'tail';
+    t.style.left = `${x}px`;
+    t.style.top = `${y}px`;
+    tailContainer.appendChild(t);
+    tail.push({el: t, life: 1});
+    for (let i = tail.length - 1; i >= 0; i--) {
+      const p = tail[i];
+      p.life -= 0.05;
+      if (p.life <= 0) { p.el.remove(); tail.splice(i, 1); }
+      else { p.el.style.opacity = p.life; }
+    }
+
+    // Orb glow at top (brighter specular highlight)
+    const topBrightness = 0.6 + 0.4 * Math.sin(angle);
+    light.style.width = (12 + 6 * Math.sin(angle)) + 'px';
+    light.style.height = (12 + 6 * Math.sin(angle)) + 'px';
+    light.style.boxShadow = `0 0 ${12 + 16 * Math.sin(angle)}px ${4 + 8 * Math.sin(angle)}px rgba(255,255,255,${0.8 + 0.25 * Math.sin(angle)})`;
+
+    // Flicker effect along streak
+    flickerOffset += 0.1;
+    const flicker = 0.9 + 0.1 * Math.sin(flickerOffset + angle * 2); // subtle brightness fluctuation
+
+    // Streak position, rotation, tail fade, halo
+    streak.style.transform = `translate(${x}px, ${y}px) rotate(${angle}rad) scaleY(${0.5 + 0.5 * Math.cos(angle)})`;
+    streak.style.background = `linear-gradient(to bottom, rgba(255,255,255,${0.6*topBrightness*flicker}), rgba(255,255,255,0))`;
+
+    requestAnimationFrame(step);
+  }
+
+  step();
+}
+</script>
+
+</body>
+</html>
