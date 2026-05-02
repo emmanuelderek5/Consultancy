@@ -108,13 +108,38 @@
   overflow: hidden;
 }
 
+
+/* Fallback styles if Tailwind fails */
+
+.text-center { text-align: center; }
+
+.text-white { color: #ffffff; }
+.text-gray-300 { color: #d1d5db; }
+
+.text-4xl { font-size: 2.25rem; font-weight: bold; }
+
+.mt-2 { margin-top: 0.5rem; }
+.mt-6 { margin-top: 1.5rem; }
+.mt-8 { margin-top: 2rem; }
+
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+
+.bg-blue-600 { background-color: #2563eb; }
+.hover\:bg-blue-700:hover { background-color: #1d4ed8; }
+
+.rounded-lg { border-radius: 0.5rem; }
+
+.font-semibold { font-weight: 600; }
+
+
 </style>
 </head>
 <body>
 
 <div class="text-center">
   <div class="logo-container fade-in" id="logoContainer">
-    <img src="images\AHS-LOGO.png" alt="AHS Logo" class="w-full h-full">
+    <img src="images/AHS-LOGO.png" alt="AHS Logo" class="w-full h-full" style="width:100%; height:100%; object-fit:cover;">
     <div class="orbit-light" id="orbitLight"></div>
     <div id="tailContainer"></div>
     <div class="vertical-light" id="verticalLight"></div>
