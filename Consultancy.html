@@ -133,6 +133,50 @@ button:disabled {
   from { transform: translateY(10px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+  .green-btn {
+    background: #25D366;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px; /* pill shape */
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: all 0.25s ease;
+  }
+
+  .green-btn:hover {
+    background: #1ebe5d;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    transform: translateY(-2px);
+  }
+
+  .green-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  }
+
+
+.scroll-indicator {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  color: #25D366;
+  animation: bounce 1.5s infinite;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, 10px); }
+}
+
 </style>
 </head>
 
@@ -203,15 +247,15 @@ button:disabled {
 
 </div>
 
-<a href="DBiography.html" target="_blank" style="display:block; margin-top:20px; text-decoration:none;">
-  <button type="button" style="background:#fff; color:#25D366; border:1px solid #25D366;">
+<a href="DBiography.html" target="_blank" style="display:block; margin-top:20px; text-decoration:none; text-align:center;">
+  <button type="button" class="green-btn">
     Learn More About Us
   </button>
 </a>
 
 <div style="text-align:center; margin-top:15px;">
   <a href="Dashboard.html" style="text-decoration:none;">
-    <button type="button" style="background:#25D366; color:white; border:none;">
+    <button type="button" class="green-btn">
       Open Dashboard (Admin ONLY!)
     </button>
   </a>
@@ -454,9 +498,34 @@ We will contact you shortly via WhatsApp.`;
   }
 }
 
-
-
 </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const scrollArrow = document.getElementById("scrollArrow");
+
+  window.addEventListener("scroll", () => {
+    const scrollTop = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const docHeight = document.documentElement.scrollHeight;
+
+    if (scrollTop > 50) {
+      scrollArrow.style.opacity = "0";
+    } else {
+      scrollArrow.style.opacity = "0.8";
+    }
+
+    if (scrollTop + windowHeight >= docHeight - 50) {
+      scrollArrow.style.opacity = "0";
+    }
+  });
+
+});
+</script>
+
+
+<div class="scroll-indicator" id="scrollArrow">⬇️</div>
 
 </body>
 </html>
