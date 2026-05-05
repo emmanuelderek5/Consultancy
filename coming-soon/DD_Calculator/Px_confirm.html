@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Confirmation</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Glass effect tweaks -->
+  <style>
+    .glass {
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.15);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-indigo-600 via-blue-600 to-sky-500 flex items-center justify-center p-4">
+
+  <div class="glass max-w-md w-full rounded-2xl shadow-xl p-6 text-white">
+
+    <!-- Header -->
+    <div class="text-center mb-6">
+      <h1 class="text-xl font-semibold tracking-wide">
+        Primary System Identified
+      </h1>
+      <p id="systemName" class="text-2xl font-bold mt-2"></p>
+    </div>
+
+    <!-- Patient Summary -->
+    <div id="patientInfo" class="space-y-2 text-sm mb-4">
+      <!-- Injected by JS -->
+    </div>
+
+    <!-- Suggested Lab Panels -->
+    <div id="labContainer" class="mb-6 hidden">
+      <h3 class="font-semibold mb-2">Suggested Initial Lab Panels</h3>
+      <ul id="labList" class="list-disc ml-5 text-sm"></ul>
+    </div>
+
+    <!-- Divider -->
+    <div class="border-t border-white/30 my-6"></div>
+
+    <!-- Buttons -->
+    <div class="flex gap-3">
+      <button
+        onclick="goBack()"
+        class="w-1/2 py-2 rounded-xl bg-white/20 hover:bg-white/30 transition"
+      >
+        ← Back
+      </button>
+
+      <button
+        onclick="continueNext()"
+        class="w-1/2 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition font-semibold"
+      >
+        Continue →
+      </button>
+    </div>
+
+    <!-- Disclaimer -->
+    <p class="text-xs text-white/70 mt-4 text-center">
+      Educational guidance only. Not a medical diagnosis.
+    </p>
+  </div>
+
+  <!-- Logic -->
+  <script>
+    const stored = localStorage.getItem("chemPathData");
+
+    if (!stored) {
+      document.getElementById("patientInfo").innerHTML =
+        "<p>No patient data found. Please return to the previous screen.</p>";
+    } else {
+      const data = JSON.parse(stored);
+
+      document.getElementById("systemName").textContent =
+        data.system.charAt(0).toUpperCase() + data.system.slice(1);
+
+      document.getElementById("patientInfo").innerHTML = `
+        <p><strong>Name:</strong> ${data.name}</p>
+        <p><strong>Age:</strong> ${data.ageDisplay || data.age}</p>
+        <p><strong>Sex:</strong> ${data.sex}</p>
+      `;
+
+      // Populate labs
+      if (data.labs && data.labs.length) {
+        const labList = document.getElementById("labList");
+        labList.innerHTML = data.labs.map(lab => `<li>${lab}</li>`).join("");
+        document.getElementById("labContainer").classList.remove("hidden");
+      }
+    }
+
+    function goBack() {
+      window.location.href = "symptom.html";
+    }
+
+    function continueNext() {
+      window.location.href = "Chem-Path-App.html";
+    }
+  </script>
+
+</body>
+</html>

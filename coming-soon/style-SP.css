@@ -1,0 +1,63 @@
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: pink;
+  padding: 10px;
+}
+
+#progressBar {
+  height: 10px;
+  background-color: green;
+  width: 0%;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  #splash-page {
+    animation: none;
+  }
+}
+
+.card {
+  content-visibility: auto;
+  contain-intrinsic-size: 430px;
+}
+
+@media (hover: none) {
+  .card-link:hover .card-details {
+    height: var(--initial-visible-card-height);
+    background: rgba(193, 18, 31, 0.7);
+    color: #fff;
+  }
+}
+
+.card-img {
+  will-change: transform;
+}
+
+
+  /* Prevent white flash */
+  body {
+    margin: 0;
+    background: #e5e7eb; /* Tailwind gray-200 */
+  }
+
+  #app-loader {
+    position: fixed;
+    inset: 0;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    font-family: system-ui, sans-serif;
+  }
+
+
+#splash-page h1 {
+  font-size: 2rem;
+}
+
+

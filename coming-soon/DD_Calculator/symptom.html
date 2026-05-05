@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Body System Guidance Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Glass effect + Chip CSS -->
+  <style>
+    .glass {
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.2);
+      cursor: pointer;
+      user-select: none;
+    }
+    .chip input {
+      display: none;
+    }
+    .chip:has(input:checked) {
+      background: rgba(16,185,129,0.6);
+      font-weight: 600;
+    }
+
+
+  </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-indigo-600 via-blue-600 to-sky-500 flex items-center justify-center p-4">
+
+  <div class="glass max-w-md w-full rounded-2xl shadow-xl p-6 text-white">
+
+    <h2 class="text-xl font-semibold text-center mb-4">
+      Symptoms to Body Organ System Guide
+    </h2>
+
+    <!-- Inputs -->
+    <input id="name" class="w-full p-2 rounded-lg text-black mb-2 focus:outline-none focus:ring-2 focus:ring-white/50" placeholder="First name" />
+    
+<!--<input id="dob" type="date" class="w-full p-2 rounded-lg text-black mb-2 focus:outline-none focus:ring-2 focus:ring-white/50" />-->
+
+<input
+  id="dob"
+  type="text"
+  placeholder="YYYY-MM-DD"
+  class="w-full p-2 rounded-lg text-black mb-2 focus:outline-none focus:ring-2 focus:ring-white/50"
+  pattern="\d{4}-\d{2}-\d{2}"
+  title="Enter date as YYYY-MM-DD"
+/>
+
+
+    <select id="sex" class="w-full p-2 rounded-lg text-black mb-3 focus:outline-none focus:ring-2 focus:ring-white/50">
+      <option value="">Select sex</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    </select>
+
+    <!-- Symptom chips -->
+    <div class="mb-3">
+      <p class="text-sm mb-1">Common symptoms (tap all that apply):</p>
+      <div class="flex flex-wrap gap-2 text-xs">
+        <label class="chip bg-white/20 hover:bg-black/40 text-white">
+          <input type="checkbox" value="chest pain" class="symptomChk"> Chest pain
+        </label>
+        <label class="chip bg-white/20 hover:bg-black/40 text-white">
+          <input type="checkbox" value="shortness of breath" class="symptomChk"> Breathless
+        </label>
+        <label class="chip bg-white/20 hover:bg-black/40 text-white">
+          <input type="checkbox" value="abdominal pain" class="symptomChk"> Abdominal pain
+        </label>
+        <label class="chip bg-white/20 hover:bg-black/40 text-white">
+          <input type="checkbox" value="headache" class="symptomChk"> Headache
+        </label>
+        <label class="chip bg-white/20 hover:bg-black/40 text-white">
+          <input type="checkbox" value="fever" class="symptomChk"> Fever
+        </label>
+       
+<button
+  id="combinationBtn"
+  type="button"
+  class="chip bg-yellow-500/40 hover:bg-black text-white text-xs"
+>
+  Combination
+</button>
+
+      </div>
+    </div>
+
+    <!-- Free text -->
+    <textarea
+      id="symptoms"
+      rows="3"
+      class="w-full p-2 rounded-lg text-black mb-3 focus:outline-none focus:ring-2 focus:ring-white/50"
+      placeholder="Additional symptoms (optional)"
+    ></textarea>
+
+    <!-- Analyze button -->
+    <button
+      onclick="analyze()"
+      class="w-full py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition font-semibold"
+    >
+      Analyze
+    </button>
+
+
+<!-- Back to Home Page button (beneath, with space above) -->
+<a href="../../Consultancy.html"
+   class="w-full py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 transition font-semibold mt-2 inline-block text-center">
+  🏠 Back to Home Page
+</a>
+
+    <!-- Red-flag urgent banner -->
+    <div id="alertBox" class="hidden mt-4 p-4 rounded-xl bg-red-600 text-white text-sm font-semibold">
+      ⚠️ Urgent symptoms detected. Immediate medical evaluation is recommended.
+    </div>
+
+    <!-- Result -->
+    <div id="output" class="hidden mt-4 p-4 rounded-xl bg-white/20 text-sm"></div>
+
+    <!-- Continue button -->
+    <button
+      id="continueBtn"
+      onclick="goToConfirm()"
+      class="hidden mt-4 w-full py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 transition font-semibold"
+    >
+      Continue
+    </button>
+
+    <p class="text-xs text-white/70 mt-4 text-center">
+      This tool provides educational guidance only and does not replace professional medical evaluation.
+    </p>
+
+  </div>
+
+  <!-- Script -->
+  <script>
+    function calculateAge(dob) {
+      const birth = new Date(dob);
+      const today = new Date();
+      let age = today.getFullYear() - birth.getFullYear();
+      const m = today.getMonth() - birth.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+      return age;
+    }
+
+    function analyze() {
+
+window.combinationUsed = window.combinationUsed || false;
+
+      // Hide previous output
+      document.getElementById("continueBtn").classList.add("hidden");
+      document.getElementById("alertBox").classList.add("hidden");
+
+      const name = document.getElementById("name").value.trim();
+      //const dob = document.getElementById("dob").value;
+      const dob = document.getElementById("dob").value.trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
+      alert("Please enter the date as YYYY-MM-DD");
+    return;
+}
+
+      const sex = document.getElementById("sex").value;
+      const freeText = document.getElementById("symptoms").value.toLowerCase();
+      const selected = Array.from(document.querySelectorAll(".symptomChk:checked")).map(cb => cb.value);
+      
+      const symptoms = (freeText + " " + selected.join(" ")).toLowerCase();
+
+     // Informational: no obvious combination detected   DEREK
+const hasFreeText = freeText.trim().length > 0;
+
+if (
+  hasFreeText &&
+  !window.combinationUsed &&
+  !hasCombinationMatch(symptoms)
+) {
+  document.getElementById("noMatchPopup").classList.remove("hidden");
+}
+
+// Highlight empty fields in red
+if (!name) document.getElementById('name').style.border = '2px solid #f87171';
+if (!dob) document.getElementById('dob').style.border = '2px solid #f87171';
+if (!sex) document.getElementById('sex').style.border = '2px solid #f87171';
+if (symptoms.trim() === "") document.getElementById('symptoms').style.border = '2px solid #f87171';
+
+      if (!name || !dob || !sex || symptoms.trim() === "") {
+        alert("Please complete all required fields and select at least one symptom.");
+        return;
+      }
+
+     const age = calculateAge(dob);
+     const ageDisplay = calculateAgeWithDays(dob);
+
+    const systems = {
+    cardiovascular: ["chest pain", "palpitations", "shortness of breath", "fainting"],
+    respiratory: ["cough", "wheezing", "breathless", "asthma"],
+    gastrointestinal: ["abdominal pain", "nausea", "vomiting", "diarrhea", "heartburn"],
+    neurological: ["headache", "seizure", "dizziness", "numbness"],
+    endocrine: ["weight gain", "weight loss", "fatigue", "heat intolerance"],
+    renal: ["urination issues", "pelvic pain", "edema"],   // matches Chem-Path 'renal'
+    hepatic: ["jaundice", "abdominal pain", "nausea"],    // new system
+    hematologic: ["fatigue", "bruising", "bleeding"],     // new system
+    immune: ["fever", "recurrent infections", "swollen glands"],
+    reproductive: ["menstrual issues", "infertility", "sexual dysfunction"], // new system
+    genitourinary: ["urination issues", "pelvic pain", "menstrual issues", "painful urination"]
+    };
+
+      let scores = {};
+      Object.keys(systems).forEach(sys => scores[sys] = 0);
+
+      for (const system in systems) {
+        systems[system].forEach(keyword => {
+          if (symptoms.includes(keyword)) scores[system] += 2;
+        });
+      }
+
+      if (age > 50) scores.cardiovascular += 1;
+      if (age < 12) scores.respiratory += 1;
+      if (sex === "female") scores.genitourinary += 1;
+      if (sex === "male") scores.cardiovascular += 1;
+
+      const bestSystem = Object.keys(scores).reduce((a, b) =>
+        scores[a] > scores[b] ? a : b
+      );
+
+      // Confidence
+      const maxScore = Math.max(...Object.values(scores));
+      const confidence = maxScore >= 6 ? "High" : maxScore >= 3 ? "Moderate" : "Low";
+
+      // Red-flag check
+      const hasChestPain = symptoms.includes("chest pain");
+      const hasSOB = symptoms.includes("shortness of breath") || symptoms.includes("breathless");
+      if (hasChestPain && hasSOB) document.getElementById("alertBox").classList.remove("hidden");
+
+      // Suggested labs
+    const labPanels = {
+    cardiovascular: ["High-sensitivity Troponin","BNP / NT-proBNP","Lipid Profile","Lp(a)","Apolipoprotein A1 / B"],
+    respiratory: ["Arterial Blood Gas","D-dimer","CRP","Eosinophil count"],
+    gastrointestinal: ["Amylase","Lipase","Calprotectin"],
+    neurological: ["B12","Folate","Electrolytes"],
+    endocrine: ["TSH","FT4","HbA1c","Vitamin D","Insulin"],
+    renal: ["Creatinine","eGFR","Urea","Sodium","Potassium","Urine ACR / PCR"],
+    hepatic: ["ALT","AST","GGT","Bilirubin","Albumin"],
+    hematologic: ["FBC","Ferritin","B12","Folate"],
+    immune: ["CRP / ESR","ANA","Complement levels"],
+    reproductive: ["LH / FSH","Prolactin","Testosterone / Estradiol"],
+    genitourinary: ["Urinalysis", "Creatinine", "PSA"]
+};
+
+
+// Get suggested labs
+let suggestedLabs = labPanels[bestSystem] || [];
+
+
+// Filter labs based on sex
+if (bestSystem === "genitourinary" && sex === "female") {
+  // Remove PSA for females
+  suggestedLabs = suggestedLabs.filter(lab => lab !== "PSA");
+}
+
+
+      // Save to localStorage
+      localStorage.setItem("chemPathData", JSON.stringify({
+        name,
+        age,
+        ageDisplay, 
+        sex,
+        system: bestSystem,
+        //labs: labPanels[bestSystem] || []
+        labs: suggestedLabs  // <-- use the filtered array here
+      }));
+
+      // Show output
+      const output = document.getElementById("output");
+      output.classList.remove("hidden");
+      output.innerHTML = `
+        <strong>Hello ${name}</strong><br>
+       
+         Age: ${ageDisplay}, Sex: ${sex}<br><br>
+        
+        <strong>Primary body system to investigate:</strong><br>
+        ${bestSystem.charAt(0).toUpperCase() + bestSystem.slice(1)}<br><br>
+        <strong>Confidence level:</strong> ${confidence}
+      `;
+
+      // Show Continue
+      document.getElementById("continueBtn").classList.remove("hidden");
+    }
+
+    function goToConfirm() {
+      window.location.href = "Px_confirm.html";
+    }
+ 
+//function calculateAgeWithDays(dob) {
+  //  const birth = new Date(dob);
+    //const today = new Date();
+
+    // If birthday is in the current year, show days
+   // if (birth.getFullYear() === today.getFullYear()) {
+     //   const diffTime = today - birth; // milliseconds
+       // const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        //return `${diffDays} day(s) old`;
+   // } else {
+        // Otherwise, show age in years
+     //   let age = today.getFullYear() - birth.getFullYear();
+       // const m = today.getMonth() - birth.getMonth();
+     //   if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+       //     age--;
+     //   }
+    //    return `${age} year(s) old`;
+  //  }
+//}
+
+function calculateAgeWithDays(dob) {
+    const birth = new Date(dob);
+    const today = new Date();
+
+    let years = today.getFullYear() - birth.getFullYear();
+    let months = today.getMonth() - birth.getMonth();
+    let days = today.getDate() - birth.getDate();
+
+    // Adjust negative days
+    if (days < 0) {
+        months--;
+        const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0); // last day of previous month
+        days += prevMonth.getDate();
+    }
+
+    // Adjust negative months
+    if (months < 0) {
+        years--;
+        months += 12;
+    }
+
+    // Less than 1 month old → days only
+    if (years === 0 && months === 0) {
+        return `${days} day(s) old`;
+    }
+
+    // Less than 1 year → months + days
+    if (years === 0) {
+        return `${months} month(s)${days ? ' ' + days + ' day(s)' : ''} old`;
+    }
+
+    // 1 year or more → years + months + days
+    let result = `${years} year(s)`;
+    if (months) result += ` ${months} month(s)`;
+    if (days) result += ` ${days} day(s)`;
+    return result + ' old';
+}
+
+
+// ---------------- COMBINATION MODAL LOGIC ----------------
+
+// Symptom combinations (exactly as requested)
+const symptomCombinations = [
+  { label: "Cardiovascular", symptoms: ["chest pain", "palpitations", "shortness of breath", "fainting"] },
+  { label: "Respiratory", symptoms: ["cough", "wheezing", "breathless", "asthma"] },
+  { label: "Gastrointestinal", symptoms: ["abdominal pain", "nausea", "vomiting", "diarrhea", "heartburn"] },
+  { label: "Neurological", symptoms: ["headache", "seizure", "dizziness", "numbness"] },
+  { label: "Endocrine", symptoms: ["weight gain", "weight loss", "fatigue", "heat intolerance"] },
+  { label: "Renal", symptoms: ["urination issues", "pelvic pain", "edema"] },
+  { label: "Hepatic", symptoms: ["jaundice", "abdominal pain", "nausea"] },
+  { label: "Hematologic", symptoms: ["fatigue", "bruising", "bleeding"] },
+  { label: "Immune", symptoms: ["fever", "recurrent infections", "swollen glands"] },
+  { label: "Reproductive", symptoms: ["menstrual issues", "infertility", "sexual dysfunction"] },
+  { label: "Genitourinary", symptoms: ["urination issues", "pelvic pain", "menstrual issues", "painful urination"] }
+];
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+const combinationBtn = document.getElementById("combinationBtn");
+const modal = document.getElementById("combinationModal");
+const list = document.getElementById("combinationList");
+const applyBtn = document.getElementById("applyCombinationBtn");
+const closeBtn = document.getElementById("closeCombinationBtn");
+
+let selectedCombo = null;
+
+// Open modal
+combinationBtn.addEventListener("click", () => {
+
+  // Deselect all single symptom chips
+  document.querySelectorAll(".symptomChk").forEach(cb => cb.checked = false);
+
+  // Clear free-text box too (optional)
+  document.getElementById("symptoms").value = "";
+
+  list.innerHTML = "";
+  selectedCombo = null;
+
+  symptomCombinations.forEach((combo, index) => {
+    const label = document.createElement("label");
+    label.className = "chip text-xs cursor-pointer";
+
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = "comboRadio"; // SINGLE SELECT
+    input.value = index;
+
+    input.addEventListener("change", () => {
+      selectedCombo = index;
+    });
+
+    label.appendChild(input);
+    label.append(combo.symptoms.join(" + "));
+    list.appendChild(label);
+  });
+
+  modal.classList.remove("hidden");
+});
+
+// Apply selection
+applyBtn.addEventListener("click", () => {
+  if (selectedCombo === null) {
+    alert("Please select one symptom combination.");
+    return;
+  }
+
+  const combo = symptomCombinations[selectedCombo];
+
+  // Clear existing symptom checks
+  document.querySelectorAll(".symptomChk").forEach(cb => cb.checked = false);
+
+// Clear existing checks
+document.querySelectorAll(".symptomChk").forEach(cb => cb.checked = false);
+
+// Track which symptoms were matched to chips
+const matched = new Set();
+
+// Apply to visible chips
+document.querySelectorAll(".symptomChk").forEach(cb => {
+  if (combo.symptoms.includes(cb.value)) {
+    cb.checked = true;
+    matched.add(cb.value);
+  }
+});
+
+// Push unmatched symptoms into free-text
+const freeTextBox = document.getElementById("symptoms");
+const missing = combo.symptoms.filter(s => !matched.has(s));
+
+if (missing.length) {
+  freeTextBox.value = missing.join(", ");
+}
+
+// REMOVE RED BORDER from the textarea
+freeTextBox.style.border = '';
+
+//DEREK
+window.combinationUsed = true;
+
+
+
+
+  modal.classList.add("hidden");
+});
+
+// Close modal
+closeBtn.addEventListener("click", () => {
+  modal.classList.add("hidden");
+});
+
+
+// --- CLEAR RED BORDER WHEN A CHIP IS SELECTED ---
+document.querySelectorAll('.symptomChk').forEach(cb => {
+  cb.addEventListener('change', () => {
+    document.getElementById('symptoms').style.border = '';
+  });
+});
+
+
+
+});
+
+
+
+
+function hasCombinationMatch(text) {
+  const input = text.toLowerCase();
+
+  for (const combo of symptomCombinations) {
+    let hits = 0;
+
+    combo.symptoms.forEach(symptom => {
+      if (input.includes(symptom)) hits++;
+    });
+
+    // Match threshold (2 symptoms)
+    if (hits >= 2) return true;
+  }
+
+  return false;
+}
+
+
+
+document.querySelectorAll('#name, #dob, #sex, #symptoms').forEach(el => {
+  el.addEventListener('input', () => el.style.border = '');
+});
+
+ </script>
+
+
+<!-- Combination Modal -->
+<div id="combinationModal" class="fixed inset-0 hidden z-50 flex items-center justify-center bg-black/50">
+  <div class="glass rounded-2xl shadow-xl p-6 max-w-md w-full text-white relative">
+
+    <h3 class="text-lg font-semibold mb-4 text-center">
+      Symptom Combinations
+    </h3>
+
+    <div id="combinationList" class="flex flex-col gap-2 text-sm mb-4">
+      <!-- injected dynamically -->
+    </div>
+
+    <div class="flex gap-2">
+      <button
+        id="applyCombinationBtn"
+        type="button"
+        class="flex-1 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 font-semibold transition"
+      >
+        Apply
+      </button>
+
+      <button
+        id="closeCombinationBtn"
+        type="button"
+        class="flex-1 py-2 rounded-xl bg-red-500 hover:bg-red-600 font-semibold transition"
+      >
+        Cancel
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- No Match Popup -->
+<div id="noMatchPopup" class="fixed inset-0 hidden z-50 flex items-center justify-center bg-black/50">
+  <div class="glass rounded-xl p-5 text-white max-w-sm w-full text-center">
+    <p class="text-sm font-semibold mb-3">
+      No obvious symptom combination detected
+    </p>
+    <p class="text-xs text-white/80 mb-4">
+      Your symptoms don’t strongly match a common pattern. Use the Individual symptom or Combination of symptoms.
+    </p>
+    <button
+      onclick="document.getElementById('noMatchPopup').classList.add('hidden')"
+      class="px-4 py-2 rounded-lg bg-indigo-500 hover:bg-indigo-600 font-semibold"
+    >
+      OK
+    </button>
+  </div>
+</div>
+
+
+
+<!-- Flatpickr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+  flatpickr("#dob", {
+    dateFormat: "Y-m-d",
+    allowInput: true,       // Users can type or tap calendar
+    defaultDate: null,      // No default date
+    maxDate: "today"        // Prevent future dates
+  });
+</script>
+
+</body>
+</html>
