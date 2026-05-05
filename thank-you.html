@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You</title>
+
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont;
+  margin: 0;
+  background: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+}
+
+.box {
+  background: white;
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+button {
+  margin-top: 20px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 10px;
+  background: #25D366;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.box {
+  animation: slideBounce 0.7s ease-out;  
+}
+
+@keyframes slideBounce {
+  0% {
+    transform: translateY(-60px);
+    opacity: 0;
+  }
+
+  60% {
+    transform: translateY(10px);
+    opacity: 1;
+  }
+
+  80% {
+    transform: translateY(-5px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>🙏 Thank you for using the App</h2>
+  <p>We appreciate your visit.</p>
+
+<button onclick="window.location.href='index.html'">
+  Close
+</button>
+</div>
+
+<script>
+document.querySelector("button").addEventListener("click", function () {
+  window.close();
+});
+</script>
+
+</body>
+</html>

@@ -177,6 +177,62 @@ button:disabled {
   50% { transform: translate(-50%, 10px); }
 }
 
+.shine-once {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine-once::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.6) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  transform: skewX(-20deg);
+  animation: shineMove 1.5s ease forwards;
+}
+
+@keyframes shineMove {
+  100% {
+    left: 125%;
+  }
+}
+
+
+#closePageBtn {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0; /* important */
+  line-height: 1; /* prevents vertical offset */
+}
+
+#closePageBtn {
+  z-index: 10000;
+}
+
+
 </style>
 </head>
 
@@ -199,7 +255,16 @@ button:disabled {
   <option value="Blood Test Interpretation">Blood Test Interpretation</option>
   <option value="Lab Test Recommendation">Lab Test Recommendation</option>
   <option value="General Consultation">General Consultation</option>
+
 </select>
+
+<div id="labTestBtnContainer" style="display:none;">
+  <a href="coming-soon/coming-soon.html" target="_blank" style="text-decoration:none;">
+    <button type="button" id="labTestBtn" class="green-btn">
+      Open Blood Test Recommendation APP (Online)
+    </button>
+  </a>
+</div>
 
 <p id="serviceDescription" class="helper-text"></p>
 
@@ -303,15 +368,30 @@ function togglePDF() {
     serviceSelect.value === "Blood Test Interpretation" ? "block" : "none";
 }
 
+const labTestBtnContainer = document.getElementById("labTestBtnContainer");
+
+const labTestBtn = document.getElementById("labTestBtn");
+
 function updateDescription() {
   if (serviceSelect.value === "Blood Test Interpretation") {
     desc.innerText = "We analyze your lab results and explain what they mean.";
-  } else if (serviceSelect.value === "Lab Test Recommendation") {
+    labTestBtnContainer.style.display = "none";
+  } 
+  else if (serviceSelect.value === "Lab Test Recommendation") {
     desc.innerText = "We recommend the right tests based on your symptoms.";
-  } else {
+    labTestBtnContainer.style.display = "block";
+
+    // ✨ trigger shine once
+    labTestBtn.classList.remove("shine-once"); // reset if re-selected
+    void labTestBtn.offsetWidth; // force reflow
+    labTestBtn.classList.add("shine-once");
+  } 
+  else {
     desc.innerText = "General health consultation and guidance.";
+    labTestBtnContainer.style.display = "none";
   }
 }
+
 
 serviceSelect.addEventListener("change", () => {
   togglePDF();
@@ -522,10 +602,52 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
 </script>
 
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+  const btn = document.getElementById("closePageBtn");
+
+  if (!btn) {
+    console.log("Close button not found");
+    return;
+  }
+
+  btn.addEventListener("click", function () {
+    window.location.href = "thank-you.html"; // change if needed
+    //history.back();
+  });
+});
+
+
+(function () {
+
+  function attachX() {
+    const btn = document.getElementById("closePageBtn");
+
+    if (btn && !btn.dataset.bound) {
+      btn.dataset.bound = "true";
+
+      btn.addEventListener("click", function () {
+        window.location.href = "thank-you.html";
+      });
+    }
+  }
+
+  attachX();
+
+  setTimeout(attachX, 300);
+  setTimeout(attachX, 1000);
+
+})();
+
+</script>
 
 <div class="scroll-indicator" id="scrollArrow">⬇️</div>
+
+<button id="closePageBtn">✕</button>
 
 </body>
 </html>
